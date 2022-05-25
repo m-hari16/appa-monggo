@@ -5,7 +5,7 @@ import (
 )
 
 type AuthService interface {
-	Register(request.UserRequest) (httpCode int, response interface{})
-	Login(request.LoginRequest) (httCode int, response interface{})
+	Register(req request.UserRequest) (httpCode int, response interface{})
+	Login(req request.LoginRequest) (httCode int, response interface{})
 	Verify() (httpCode int, response bool)
 }

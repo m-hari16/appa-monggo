@@ -2,6 +2,7 @@ package domain
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
+// @email field is unique
 type User struct {
 	Id        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name      string             `json:"name" bson:"name"`

@@ -4,6 +4,7 @@ import (
 	"go-fiber-app/app"
 	"go-fiber-app/helper"
 	auth "go-fiber-app/src/auth/route"
+	device "go-fiber-app/src/device/route"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
@@ -23,6 +24,7 @@ func main() {
 	r.Get("/", Greeting)
 
 	auth.Register(r, database)
+	device.Register(r, database)
 
 	r.Listen(":" + os.Getenv("DB_PORT"))
 }

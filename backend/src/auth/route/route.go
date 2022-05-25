@@ -1,6 +1,7 @@
 package route
 
 import (
+	"go-fiber-app/helper"
 	"go-fiber-app/src/auth/controller"
 	"go-fiber-app/src/auth/repository"
 	"go-fiber-app/src/auth/service"
@@ -10,8 +11,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func Greeting(c *fiber.Ctx) error {
-	return c.SendString("Auth")
+func greeting(c *fiber.Ctx) error {
+	return c.Status(fiber.StatusOK).JSON(helper.OnlyMessage("Auth module"))
 }
 
 func Register(route *fiber.App, db *mongo.Client) {
@@ -19,6 +20,7 @@ func Register(route *fiber.App, db *mongo.Client) {
 	service := service.NewAuthService(repository, validator.New())
 	controller := controller.NewAuthController(service)
 
-	route.Post("/api/register", controller.Register)
-	route.Post("/api/login", controller.Login)
+	route.Post("/api/auth/register", controller.Register)
+	route.Post("/api/auth/login", controller.Login)
+	route.Get("/api/auth/*", greeting)
 }
