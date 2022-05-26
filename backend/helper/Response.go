@@ -68,3 +68,25 @@ func Unauthorized(message string) Response {
 		Data:    nil,
 	}
 }
+
+func NotFound(message string) Response {
+	var messages []string
+	messages = append(messages, message)
+	return Response{
+		Code:    "404",
+		Success: true,
+		Message: messages,
+		Data:    nil,
+	}
+}
+
+func ServerError(message string) Response {
+	var messages []string
+	messages = append(messages, message)
+	return Response{
+		Code:    "500",
+		Success: false,
+		Message: messages,
+		Data:    nil,
+	}
+}

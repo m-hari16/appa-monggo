@@ -29,3 +29,7 @@ func ToSnake(camel string) (snake string) {
 	}
 	return b.String()
 }
+
+func ToInterface(data interface{}) interface{} {
+	return data
+}

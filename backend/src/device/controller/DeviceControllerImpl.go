@@ -27,7 +27,11 @@ func (d DeviceControllerImpl) Get(c *fiber.Ctx) error {
 }
 
 func (d DeviceControllerImpl) Show(c *fiber.Ctx) error {
-	return c.JSON(fiber.StatusOK)
+	deviceId := request.DeviceId(c.Params("device_id"))
+
+	httpCode, service := d.service.Show(deviceId)
+
+	return c.Status(httpCode).JSON(service)
 }
 
 func (d DeviceControllerImpl) Delete(c *fiber.Ctx) error {

@@ -21,22 +21,22 @@ func NewAuthService(repository repository.AuthRepository, validate *validator.Va
 	return AuthServiceImpl{repository: repository, validate: validate}
 }
 
-func (a AuthServiceImpl) Login(req request.LoginRequest) (httpCode int, response interface{}) {
+func (a AuthServiceImpl) Login(req request.LoginRequest) (httpCode int, response helper.Response) {
 	err := a.validate.Struct(req)
 	if err != nil {
 		return fiber.StatusBadRequest, helper.ErrValidate(err)
 	}
 
-	err, repo := a.repository.Login(req)
+	err, result := a.repository.Login(req)
 
 	if err != nil {
 		return fiber.StatusNotFound, helper.Unauthorized(err.Error())
 	}
 
-	return fiber.StatusOK, helper.HasOk(repo)
+	return fiber.StatusOK, helper.HasOk(result)
 }
 
-func (a AuthServiceImpl) Register(req request.UserRequest) (httpCode int, response interface{}) {
+func (a AuthServiceImpl) Register(req request.UserRequest) (httpCode int, response helper.Response) {
 	err := a.validate.Struct(req)
 	if err != nil {
 		return fiber.StatusBadRequest, helper.ErrValidate(err)
@@ -44,7 +44,7 @@ func (a AuthServiceImpl) Register(req request.UserRequest) (httpCode int, respon
 
 	hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 
-	svcReq := domain.User{
+	repoRequest := domain.User{
 		Name:      req.Name,
 		Email:     req.Email,
 		Password:  string(hashedPass),
@@ -52,12 +52,12 @@ func (a AuthServiceImpl) Register(req request.UserRequest) (httpCode int, respon
 		UpdatedAt: 0,
 	}
 
-	err, repo := a.repository.Register(svcReq)
+	err, result := a.repository.Register(repoRequest)
 	if err != nil {
 		return fiber.StatusUnprocessableEntity, helper.BadRequest(err.Error())
 	}
 
-	return fiber.StatusOK, helper.HasStore(repo)
+	return fiber.StatusOK, helper.HasStore(result)
 }
 
 func (a AuthServiceImpl) Verify() (httpCode int, response bool) {

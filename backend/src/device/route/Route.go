@@ -17,7 +17,7 @@ func greeting(c *fiber.Ctx) error {
 
 func Register(route *fiber.App, db *mongo.Client) {
 	repository := repository.NewDeviceRepository(db)
-	service := service.NewDeviceService(repository, validator.New())
+	service := service.NewDeviceService(repository, validator.New(), db)
 	controller := controller.NewDeviceController(service)
 
 	route.Get("/api/device", controller.Get)

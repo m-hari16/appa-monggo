@@ -2,12 +2,14 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"go-fiber-app/app"
 	"go-fiber-app/helper"
 	"go-fiber-app/src/auth/entity/domain"
 	"go-fiber-app/src/auth/entity/request"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -22,6 +24,21 @@ type AuthRepositoryImpl struct {
 
 func NewAuthRepository(db *mongo.Client) AuthRepository {
 	return AuthRepositoryImpl{db: db}
+}
+
+func (a AuthRepositoryImpl) Find(req request.UserId) (err error, result domain.User) {
+	ctx, cancel := helper.GetContext()
+	defer cancel()
+
+	collection := a.db.Database(app.GetDatabaseName()).Collection(collectionName)
+	userId, _ := primitive.ObjectIDFromHex(string(req))
+	err = collection.FindOne(ctx, bson.M{"_id": userId}).Decode(&result)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err, result
+	}
+
+	return nil, result
 }
 
 func (a AuthRepositoryImpl) Login(request request.LoginRequest) (err error, result domain.User) {
