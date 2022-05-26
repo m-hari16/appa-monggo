@@ -11,9 +11,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+var conn *mongo.Client
+
 type MongoDB struct{}
 
 func (m MongoDB) NewDB() interface{} {
+
+	if conn != nil {
+		return conn
+	}
+
 	fmt.Println("Connecting Database...")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	_ = cancel
@@ -37,5 +44,7 @@ func (m MongoDB) NewDB() interface{} {
 	helper.PanicIfNeeded(err)
 	fmt.Println("Connected")
 
-	return client
+	conn = client
+
+	return conn
 }
