@@ -22,5 +22,6 @@ func Register(route *fiber.App, db *mongo.Client) {
 
 	route.Post("/api/auth/register", controller.Register)
 	route.Post("/api/auth/login", controller.Login)
+	route.Patch("/api/auth/token/:email", controller.UpdateToken)
 	route.Get("/api/auth/*", greeting)
 }

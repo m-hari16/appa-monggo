@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -45,10 +46,12 @@ func (a AuthServiceImpl) Register(req request.UserRequest) (httpCode int, respon
 	hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 
 	repoRequest := domain.User{
+		Id:        primitive.NewObjectID(),
 		Name:      req.Name,
-		Email:     req.Email,
+		Email:     domain.Email(req.Email),
 		Password:  string(hashedPass),
 		CreatedAt: time.Now().Unix(),
+		Token:     domain.Token(helper.RandomString(30)),
 		UpdatedAt: 0,
 	}
 
@@ -58,6 +61,16 @@ func (a AuthServiceImpl) Register(req request.UserRequest) (httpCode int, respon
 	}
 
 	return fiber.StatusOK, helper.HasStore(result)
+}
+
+func (a AuthServiceImpl) UpdateToken(email domain.Email) (httpCode int, response helper.Response) {
+	err, result := a.repository.UpdateToken(email, domain.Token(helper.RandomString(30)))
+
+	if err != nil {
+		return fiber.StatusUnprocessableEntity, helper.BadRequest(err.Error())
+	}
+
+	return fiber.StatusOK, helper.HasOk(result)
 }
 
 func (a AuthServiceImpl) Verify() (httpCode int, response bool) {

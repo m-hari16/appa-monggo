@@ -2,6 +2,7 @@ package controller
 
 import (
 	"go-fiber-app/helper"
+	"go-fiber-app/src/auth/entity/domain"
 	"go-fiber-app/src/auth/entity/request"
 	"go-fiber-app/src/auth/service"
 
@@ -36,4 +37,12 @@ func (a AuthControllerImpl) Login(c *fiber.Ctx) error {
 
 func (a AuthControllerImpl) Verify(c *fiber.Ctx) error {
 	return c.JSON(helper.UnprocessableEntity())
+}
+
+func (a AuthControllerImpl) UpdateToken(c *fiber.Ctx) error {
+	var email domain.Email
+	email = domain.Email(c.Params("email"))
+	httpCode, response := a.service.UpdateToken(email)
+
+	return c.Status(httpCode).JSON(response)
 }

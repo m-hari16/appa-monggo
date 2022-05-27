@@ -64,6 +64,10 @@ func (a AuthRepositoryImpl) Register(request domain.User) (err error, result dom
 	ctx, cancel := helper.GetContext()
 	defer cancel()
 
+	if request.Token.IsValid() != nil {
+		return request.Token.IsValid(), domain.User{}
+	}
+
 	collection := a.db.Database(app.GetDatabaseName()).Collection(collectionName)
 
 	_, err = collection.InsertOne(ctx, request)
@@ -78,4 +82,29 @@ func (a AuthRepositoryImpl) Register(request domain.User) (err error, result dom
 	}
 
 	return nil, request
+}
+
+func (a AuthRepositoryImpl) UpdateToken(email domain.Email, token domain.Token) (err error, result interface{}) {
+	ctx, cancel := helper.GetContext()
+	defer cancel()
+
+	filter := bson.M{
+		"email": bson.M{
+			"$eq": email,
+		},
+	}
+
+	update := bson.M{
+		"$set": bson.M{"token": token},
+	}
+
+	collection := a.db.Database(app.GetDatabaseName()).Collection(collectionName)
+	result, err = collection.UpdateOne(ctx, filter, update)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return errors.New("Update error"), domain.User{}
+	}
+
+	return nil, result
 }
