@@ -6,5 +6,5 @@ import (
 )
 
 func GetContext() (context.Context, context.CancelFunc) {
-	return context.WithTimeout(context.Background(), 30*time.Second)
+	return context.WithTimeout(context.Background(), 3*time.Second)
 }
