@@ -13,6 +13,7 @@ const (
 
 type Message struct {
 	Id          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	User        User               `json:"user" bson:"user"`
 	Device      Device             `json:"device" bson:"device"`
 	PhoneNumber string             `json:"phone_number" bson:"phone_number"`
 	Messages    string             `json:"messages" bson:"messages"`
@@ -30,6 +31,12 @@ type Device struct {
 	Id    primitive.ObjectID `json:"id" bson:"_id"`
 	Brand string             `json:"brand" bson:"brand"`
 	Model string             `json:"model" bson:"model"`
+}
+
+type User struct {
+	Id    primitive.ObjectID `json:"id" bson:"_id"`
+	Email string             `json:"email" bson:"email"`
+	Name  string             `json:"name" bson:"name"`
 }
 
 type MessageStatus string

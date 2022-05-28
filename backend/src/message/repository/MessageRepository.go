@@ -1,6 +1,7 @@
 package repository
 
 import (
+	authRequest "go-fiber-app/src/auth/entity/request"
 	"go-fiber-app/src/message/entity/domain"
 	"go-fiber-app/src/message/entity/request"
 
@@ -8,6 +9,7 @@ import (
 )
 
 type MessageRepository interface {
+	Get(req authRequest.UserId) (err error, result []domain.Message)
 	Create(req domain.Message) (err error, result domain.Message)
 	Show(req request.MessageId) (err error, result domain.Message)
 }

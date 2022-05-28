@@ -2,8 +2,10 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"go-fiber-app/app"
 	"go-fiber-app/helper"
+	authRequest "go-fiber-app/src/auth/entity/request"
 	"go-fiber-app/src/message/entity/domain"
 	"go-fiber-app/src/message/entity/request"
 
@@ -18,6 +20,31 @@ const (
 
 type MessageRepositoryImpl struct {
 	db *mongo.Client
+}
+
+func (m MessageRepositoryImpl) Get(req authRequest.UserId) (err error, result []domain.Message) {
+	ctx, cancel := helper.GetContext()
+	defer cancel()
+
+	obj, _ := primitive.ObjectIDFromHex(string(req))
+	filter := bson.M{"user._id": obj}
+
+	collection := m.db.Database(app.GetDatabaseName()).Collection(collectionName)
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err, result
+	}
+
+	for cursor.Next(ctx) {
+		var tmpResult domain.Message
+		err = cursor.Decode(&tmpResult)
+		helper.PanicIfNeeded(err)
+
+		result = append(result, tmpResult)
+	}
+
+	return nil, result
 }
 
 func (m MessageRepositoryImpl) Create(req domain.Message) (err error, result domain.Message) {

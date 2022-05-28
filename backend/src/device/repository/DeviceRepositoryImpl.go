@@ -47,7 +47,8 @@ func (d DeviceRepositoryImpl) Get(req authRequest.UserId) (err error, result []d
 
 	collection := d.Db.Database(app.GetDatabaseName()).Collection(collectionName)
 	obj, _ := primitive.ObjectIDFromHex(string(req))
-	cursor, err := collection.Find(ctx, bson.M{"_id": obj})
+	cursor, err := collection.Find(ctx, bson.M{"user._id": obj})
+
 	if err != nil {
 		fmt.Println(errors.New(err.Error()))
 		return err, result

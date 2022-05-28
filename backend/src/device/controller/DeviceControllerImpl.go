@@ -1,7 +1,8 @@
 package controller
 
 import (
-	"go-fiber-app/helper"
+	authRequest "go-fiber-app/src/auth/entity/request"
+	"go-fiber-app/src/auth/pkg"
 	"go-fiber-app/src/device/entity/request"
 	"go-fiber-app/src/device/service"
 
@@ -14,26 +15,32 @@ type DeviceControllerImpl struct {
 
 func (d DeviceControllerImpl) Create(c *fiber.Ctx) error {
 	var req request.Device
-	err := c.BodyParser(&req)
-	helper.PanicIfNeeded(err)
+	_ = c.BodyParser(&req)
 
-	httpCode, service := d.service.Create(req)
+	jwt := pkg.NewJwtPkg()
+	userData := jwt.GetTokenData(c)
+	req.UserId = userData["id"].(string)
 
-	return c.Status(httpCode).JSON(service)
+	httpCode, response := d.service.Create(req)
+
+	return c.Status(httpCode).JSON(response)
 }
 
 func (d DeviceControllerImpl) Get(c *fiber.Ctx) error {
-	return c.JSON(fiber.StatusOK)
+	var userId authRequest.UserId
+	jwt := pkg.NewJwtPkg()
+	userData := jwt.GetTokenData(c)
+	userId = authRequest.UserId(userData["id"].(string))
+
+	httpCode, response := d.service.Get(userId)
+
+	return c.Status(httpCode).JSON(response)
 }
 
 func (d DeviceControllerImpl) Show(c *fiber.Ctx) error {
 	deviceId := request.DeviceId(c.Params("device_id"))
 
-	httpCode, service := d.service.Show(deviceId)
+	httpCode, response := d.service.Show(deviceId)
 
-	return c.Status(httpCode).JSON(service)
-}
-
-func (d DeviceControllerImpl) Delete(c *fiber.Ctx) error {
-	return c.JSON(fiber.StatusOK)
+	return c.Status(httpCode).JSON(response)
 }

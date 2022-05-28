@@ -7,6 +7,7 @@ import (
 )
 
 type MessageController interface {
+	Get(c *fiber.Ctx) error
 	Create(c *fiber.Ctx) error
 	Show(c *fiber.Ctx) error
 }

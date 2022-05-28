@@ -1,6 +1,9 @@
 package helper
 
-import "strings"
+import (
+	"encoding/json"
+	"strings"
+)
 
 /**
  * @reference https://stackoverflow.com/questions/56616196/how-to-convert-camel-case-string-to-snake-case
@@ -32,4 +35,16 @@ func ToSnake(camel string) (snake string) {
 
 func ToInterface(data interface{}) interface{} {
 	return data
+}
+
+func MapToStruct(data map[string]interface{}, result interface{}) {
+	dataByte, err := json.Marshal(data)
+	if err != nil {
+		panic(err)
+	}
+
+	err = json.Unmarshal(dataByte, &result)
+	if err != nil {
+		panic(err)
+	}
 }

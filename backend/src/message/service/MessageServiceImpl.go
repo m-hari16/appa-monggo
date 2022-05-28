@@ -3,6 +3,7 @@ package service
 import (
 	"go-fiber-app/app"
 	"go-fiber-app/helper"
+	authRequest "go-fiber-app/src/auth/entity/request"
 	deviceRequest "go-fiber-app/src/device/entity/request"
 	deviceRepository "go-fiber-app/src/device/repository"
 	"go-fiber-app/src/message/entity/domain"
@@ -21,6 +22,16 @@ type MessageServiceImpl struct {
 	repository repository.MessageRepository
 	validate   *validator.Validate
 	db         *mongo.Client
+}
+
+func (m MessageServiceImpl) Get(req authRequest.UserId) (httpCode int, response helper.Response) {
+	err, result := m.repository.Get(req)
+
+	if err != nil {
+		return fiber.StatusInternalServerError, helper.ServerError(err.Error())
+	}
+
+	return fiber.StatusOK, helper.HasOk(result)
 }
 
 func (m MessageServiceImpl) Create(req request.Message) (httpCode int, response helper.Response) {
@@ -45,8 +56,12 @@ func (m MessageServiceImpl) Create(req request.Message) (httpCode int, response 
 	deviceDomain := domain.Device{}
 	copier.Copy(&deviceDomain, &deviceResponse)
 
+	messageUser := domain.User{}
+	copier.Copy(&messageUser, &deviceResponse.User)
+
 	repoRequest := domain.Message{
 		Id:          primitive.NewObjectID(),
+		User:        messageUser,
 		Device:      deviceDomain,
 		PhoneNumber: req.PhoneNumber,
 		Messages:    req.Messages,

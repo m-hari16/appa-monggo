@@ -10,7 +10,6 @@ type DeviceController interface {
 	Create(c *fiber.Ctx) error
 	Get(c *fiber.Ctx) error
 	Show(c *fiber.Ctx) error
-	Delete(c *fiber.Ctx) error
 }
 
 func NewDeviceController(service service.DeviceService) DeviceController {

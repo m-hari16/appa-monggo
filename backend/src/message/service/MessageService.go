@@ -2,6 +2,7 @@ package service
 
 import (
 	"go-fiber-app/helper"
+	authRequest "go-fiber-app/src/auth/entity/request"
 	"go-fiber-app/src/message/entity/request"
 	"go-fiber-app/src/message/repository"
 
@@ -9,6 +10,7 @@ import (
 )
 
 type MessageService interface {
+	Get(req authRequest.UserId) (httpCode int, response helper.Response)
 	Create(req request.Message) (httpCode int, response helper.Response)
 	Show(req request.MessageId) (httpCode int, response helper.Response)
 }

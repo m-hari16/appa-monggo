@@ -2,6 +2,7 @@ package service
 
 import (
 	"go-fiber-app/helper"
+	authRequest "go-fiber-app/src/auth/entity/request"
 	"go-fiber-app/src/device/entity/request"
 	"go-fiber-app/src/device/repository"
 
@@ -11,7 +12,7 @@ import (
 
 type DeviceService interface {
 	Create(req request.Device) (httpCode int, response helper.Response)
-	Get() (httpCode int, response helper.Response)
+	Get(req authRequest.UserId) (httpCode int, response helper.Response)
 	Show(req request.DeviceId) (httpCode int, response helper.Response)
 }
 

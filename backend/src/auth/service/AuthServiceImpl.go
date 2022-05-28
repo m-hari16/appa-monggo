@@ -4,6 +4,7 @@ import (
 	"go-fiber-app/helper"
 	"go-fiber-app/src/auth/entity/domain"
 	"go-fiber-app/src/auth/entity/request"
+	"go-fiber-app/src/auth/pkg"
 	"go-fiber-app/src/auth/repository"
 	"time"
 
@@ -34,7 +35,10 @@ func (a AuthServiceImpl) Login(req request.LoginRequest) (httpCode int, response
 		return fiber.StatusNotFound, helper.Unauthorized(err.Error())
 	}
 
-	return fiber.StatusOK, helper.HasOk(result)
+	jwt := pkg.NewJwtPkg()
+	err, token := jwt.TokenClaims(result)
+
+	return fiber.StatusOK, helper.HasOk(fiber.Map{"access_token": token, "user": result})
 }
 
 func (a AuthServiceImpl) Register(req request.UserRequest) (httpCode int, response helper.Response) {

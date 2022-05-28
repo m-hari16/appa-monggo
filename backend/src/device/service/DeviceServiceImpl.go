@@ -2,8 +2,8 @@ package service
 
 import (
 	"go-fiber-app/helper"
-	authReq "go-fiber-app/src/auth/entity/request"
-	authRepo "go-fiber-app/src/auth/repository"
+	authRequest "go-fiber-app/src/auth/entity/request"
+	authRepository "go-fiber-app/src/auth/repository"
 	"go-fiber-app/src/device/entity/domain"
 	"go-fiber-app/src/device/entity/request"
 	"go-fiber-app/src/device/repository"
@@ -28,8 +28,8 @@ func (d DeviceServiceImpl) Create(req request.Device) (httpCode int, response he
 		return fiber.StatusBadRequest, helper.ErrValidate(err)
 	}
 
-	authRepository := authRepo.NewAuthRepository(d.db)
-	err, authResponse := authRepository.Find(authReq.UserId(req.UserId))
+	authRepository := authRepository.NewAuthRepository(d.db)
+	err, authResponse := authRepository.Find(authRequest.UserId(req.UserId))
 	userDomain := domain.User{}
 	copier.Copy(&userDomain, &authResponse)
 
@@ -51,10 +51,10 @@ func (d DeviceServiceImpl) Create(req request.Device) (httpCode int, response he
 	return fiber.StatusOK, helper.HasStore(result)
 }
 
-func (d DeviceServiceImpl) Get() (httpCode int, response helper.Response) {
-	/** getting userid from jwt */
+func (d DeviceServiceImpl) Get(req authRequest.UserId) (httpCode int, response helper.Response) {
+	_, result := d.repository.Get(req)
 
-	return fiber.StatusOK, helper.HasOk(nil)
+	return fiber.StatusOK, helper.HasOk(result)
 }
 
 func (d DeviceServiceImpl) Show(req request.DeviceId) (httpCode int, response helper.Response) {
