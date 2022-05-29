@@ -8,7 +8,7 @@ import (
 
 type Message struct {
 	Id          primitive.ObjectID `json:"id"`
-	DeviceId    string             `json:"device_id" validate:"required"`
+	DeviceId    string             `json:"device_id"`
 	PhoneNumber string             `json:"phone_number" validate:"required"`
 	Messages    string             `json:"messages" validate:"required"`
 }

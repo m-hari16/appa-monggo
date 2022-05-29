@@ -41,6 +41,21 @@ func (a AuthRepositoryImpl) Find(req request.UserId) (err error, result domain.U
 	return nil, result
 }
 
+func (a AuthRepositoryImpl) FindByToken(token string) (err error, result domain.User) {
+	ctx, cancel := helper.GetContext()
+	defer cancel()
+
+	filter := bson.M{"token": token}
+
+	collection := a.db.Database(app.GetDatabaseName()).Collection(collectionName)
+	err = collection.FindOne(ctx, filter).Decode(&result)
+	if err != nil {
+		return err, result
+	}
+
+	return nil, result
+}
+
 func (a AuthRepositoryImpl) Login(request request.LoginRequest) (err error, result domain.User) {
 	ctx, cancel := helper.GetContext()
 	defer cancel()

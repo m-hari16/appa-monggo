@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type MessageController interface {
@@ -14,6 +15,6 @@ type MessageController interface {
 	Update(c *fiber.Ctx) error
 }
 
-func NewMessageController(service service.MessageService, validate *validator.Validate) MessageController {
-	return MessageControllerImpl{service: service, validate: validate}
+func NewMessageController(service service.MessageService, validate *validator.Validate, db *mongo.Client) MessageController {
+	return MessageControllerImpl{service: service, validate: validate, db: db}
 }

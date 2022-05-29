@@ -4,16 +4,21 @@ import (
 	"go-fiber-app/helper"
 	authRequest "go-fiber-app/src/auth/entity/request"
 	"go-fiber-app/src/auth/pkg"
+	authRepository "go-fiber-app/src/auth/repository"
+	"go-fiber-app/src/message/entity/domain"
 	"go-fiber-app/src/message/entity/request"
 	"go-fiber-app/src/message/service"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/jinzhu/copier"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type MessageControllerImpl struct {
 	service  service.MessageService
 	validate *validator.Validate
+	db       *mongo.Client
 }
 
 func (m MessageControllerImpl) Get(c *fiber.Ctx) error {
@@ -27,15 +32,28 @@ func (m MessageControllerImpl) Get(c *fiber.Ctx) error {
 
 func (m MessageControllerImpl) Create(c *fiber.Ctx) error {
 	var req request.Message
+	var user domain.User
+
 	_ = c.BodyParser(&req)
 	userToken := string(c.Request().Header.Peek("x-api-key"))
 
-	err := m.validate.Struct(req)
+	userRepository := authRepository.NewAuthRepository(m.db)
+	err, userResponse := userRepository.FindByToken(userToken)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(helper.NotFound("Unauthorized"))
+	}
+	copier.Copy(&user, &userResponse)
+
+	err = m.validate.Struct(req)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(helper.ErrValidate(err))
 	}
 
-	httpCode, response := m.service.Create(req, userToken)
+	if string(userResponse.Token) != userToken {
+		return c.Status(fiber.StatusUnauthorized).JSON(helper.Unauthorized("Unauthorized"))
+	}
+
+	httpCode, response := m.service.Create(req, user)
 
 	return c.Status(httpCode).JSON(response)
 }

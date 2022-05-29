@@ -2,7 +2,6 @@ package route
 
 import (
 	"go-fiber-app/helper"
-	"go-fiber-app/src/auth/pkg"
 	"go-fiber-app/src/message/controller"
 	"go-fiber-app/src/message/repository"
 	"go-fiber-app/src/message/service"
@@ -19,12 +18,13 @@ func greeting(c *fiber.Ctx) error {
 func Register(route *fiber.App, db *mongo.Client) {
 	repository := repository.NewMessageRepository(db)
 	service := service.NewMessageService(repository)
-	controller := controller.NewMessageController(service, validator.New())
-	jwt := pkg.NewJwtPkg()
+	controller := controller.NewMessageController(service, validator.New(), db)
+	// jwt := pkg.NewJwtPkg()
 
 	route.Get("/api/message/greeting", greeting)
 	route.Post("/api/message", controller.Create)
-	jwt.JwtWare(route)
+
+	// jwt.JwtWare(route)
 	route.Get("/api/message", controller.Get)
 	route.Get("/api/message/:message_id", controller.Show)
 	route.Patch("api/message", controller.Update)
