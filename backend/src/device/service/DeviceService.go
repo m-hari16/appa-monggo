@@ -6,7 +6,6 @@ import (
 	"go-fiber-app/src/device/entity/request"
 	"go-fiber-app/src/device/repository"
 
-	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -16,6 +15,6 @@ type DeviceService interface {
 	Show(req request.DeviceId) (httpCode int, response helper.Response)
 }
 
-func NewDeviceService(repository repository.DeviceRepository, validate *validator.Validate, db *mongo.Client) DeviceService {
-	return DeviceServiceImpl{repository: repository, validate: validate, db: db}
+func NewDeviceService(repository repository.DeviceRepository, db *mongo.Client) DeviceService {
+	return DeviceServiceImpl{repository: repository, db: db}
 }

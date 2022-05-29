@@ -7,17 +7,23 @@ import (
 	"go-fiber-app/src/auth/pkg"
 	"go-fiber-app/src/auth/service"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
 type AuthControllerImpl struct {
-	service service.AuthService
+	service  service.AuthService
+	validate *validator.Validate
 }
 
 func (a AuthControllerImpl) Register(c *fiber.Ctx) error {
 	var req request.UserRequest
-	err := c.BodyParser(&req)
-	helper.PanicIfNeeded(err)
+	_ = c.BodyParser(&req)
+
+	err := a.validate.Struct(req)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(helper.ErrValidate(err))
+	}
 
 	code, service := a.service.Register(req)
 	return c.Status(code).JSON(service)
@@ -27,6 +33,11 @@ func (a AuthControllerImpl) Login(c *fiber.Ctx) error {
 	var req request.LoginRequest
 	err := c.BodyParser(&req)
 	helper.PanicIfNeeded(err)
+
+	err = a.validate.Struct(req)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(helper.ErrValidate(err))
+	}
 
 	code, response := a.service.Login(req)
 	return c.Status(code).JSON(response)

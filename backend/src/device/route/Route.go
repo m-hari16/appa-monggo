@@ -18,8 +18,8 @@ func greeting(c *fiber.Ctx) error {
 
 func Register(route *fiber.App, db *mongo.Client) {
 	repository := repository.NewDeviceRepository(db)
-	service := service.NewDeviceService(repository, validator.New(), db)
-	controller := controller.NewDeviceController(service)
+	service := service.NewDeviceService(repository, db)
+	controller := controller.NewDeviceController(service, validator.New())
 	jwt := pkg.NewJwtPkg()
 
 	route.Get("/api/device/greeting", greeting)

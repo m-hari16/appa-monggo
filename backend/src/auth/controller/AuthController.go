@@ -3,6 +3,7 @@ package controller
 import (
 	"go-fiber-app/src/auth/service"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -13,6 +14,6 @@ type AuthController interface {
 	UpdateToken(c *fiber.Ctx) error
 }
 
-func NewAuthController(service service.AuthService) AuthController {
-	return &AuthControllerImpl{service: service}
+func NewAuthController(service service.AuthService, validate *validator.Validate) AuthController {
+	return &AuthControllerImpl{service: service, validate: validate}
 }

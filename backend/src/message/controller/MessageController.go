@@ -3,6 +3,7 @@ package controller
 import (
 	"go-fiber-app/src/message/service"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -13,6 +14,6 @@ type MessageController interface {
 	Update(c *fiber.Ctx) error
 }
 
-func NewMessageController(service service.MessageService) MessageController {
-	return MessageControllerImpl{service: service}
+func NewMessageController(service service.MessageService, validate *validator.Validate) MessageController {
+	return MessageControllerImpl{service: service, validate: validate}
 }

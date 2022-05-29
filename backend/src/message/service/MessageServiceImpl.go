@@ -11,7 +11,6 @@ import (
 	"go-fiber-app/src/message/repository"
 	"time"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/jinzhu/copier"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -20,7 +19,6 @@ import (
 
 type MessageServiceImpl struct {
 	repository repository.MessageRepository
-	validate   *validator.Validate
 	db         *mongo.Client
 }
 
@@ -34,17 +32,18 @@ func (m MessageServiceImpl) Get(req authRequest.UserId) (httpCode int, response 
 	return fiber.StatusOK, helper.HasOk(result)
 }
 
-func (m MessageServiceImpl) Create(req request.Message) (httpCode int, response helper.Response) {
-	err := m.validate.Struct(req)
-	if err != nil {
-		return fiber.StatusBadRequest, helper.ErrValidate(err)
-	}
+func (m MessageServiceImpl) Create(req request.Message, token string) (httpCode int, response helper.Response) {
 
 	occuredAt := time.Now().Unix()
 	messageLog := domain.MessageLog{
 		Status:    domain.PendingStatus,
 		OccuredAt: occuredAt,
 	}
+
+	// get token
+	// get device
+
+	// pengecekan device == token
 
 	deviceRepository := deviceRepository.NewDeviceRepository(app.NewDatabase().NewDB().(*mongo.Client))
 	err, deviceResponse := deviceRepository.Find(deviceRequest.DeviceId(req.DeviceId))
@@ -90,11 +89,6 @@ func (m MessageServiceImpl) Show(req request.MessageId) (httpCode int, response 
 }
 
 func (m MessageServiceImpl) Update(req request.MessageLogUpdate) (httpCode int, reponse helper.Response) {
-
-	err := m.validate.Struct(req)
-	if err != nil {
-		return fiber.StatusBadRequest, helper.ErrValidate(err)
-	}
 
 	messageLog := domain.MessageLog{
 		Status:    req.Status,

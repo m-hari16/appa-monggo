@@ -8,7 +8,6 @@ import (
 	"go-fiber-app/src/auth/repository"
 	"time"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
@@ -16,18 +15,9 @@ import (
 
 type AuthServiceImpl struct {
 	repository repository.AuthRepository
-	validate   *validator.Validate
-}
-
-func NewAuthService(repository repository.AuthRepository, validate *validator.Validate) AuthService {
-	return AuthServiceImpl{repository: repository, validate: validate}
 }
 
 func (a AuthServiceImpl) Login(req request.LoginRequest) (httpCode int, response helper.Response) {
-	err := a.validate.Struct(req)
-	if err != nil {
-		return fiber.StatusBadRequest, helper.ErrValidate(err)
-	}
 
 	err, result := a.repository.Login(req)
 
@@ -42,10 +32,6 @@ func (a AuthServiceImpl) Login(req request.LoginRequest) (httpCode int, response
 }
 
 func (a AuthServiceImpl) Register(req request.UserRequest) (httpCode int, response helper.Response) {
-	err := a.validate.Struct(req)
-	if err != nil {
-		return fiber.StatusBadRequest, helper.ErrValidate(err)
-	}
 
 	hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 

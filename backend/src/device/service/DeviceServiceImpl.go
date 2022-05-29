@@ -9,7 +9,6 @@ import (
 	"go-fiber-app/src/device/repository"
 	"time"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/jinzhu/copier"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -18,15 +17,10 @@ import (
 
 type DeviceServiceImpl struct {
 	repository repository.DeviceRepository
-	validate   *validator.Validate
 	db         *mongo.Client
 }
 
 func (d DeviceServiceImpl) Create(req request.Device) (httpCode int, response helper.Response) {
-	err := d.validate.Struct(req)
-	if err != nil {
-		return fiber.StatusBadRequest, helper.ErrValidate(err)
-	}
 
 	authRepository := authRepository.NewAuthRepository(d.db)
 	err, authResponse := authRepository.Find(authRequest.UserId(req.UserId))
