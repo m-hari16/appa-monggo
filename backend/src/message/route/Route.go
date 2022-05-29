@@ -18,7 +18,7 @@ func greeting(c *fiber.Ctx) error {
 
 func Register(route *fiber.App, db *mongo.Client) {
 	repository := repository.NewMessageRepository(db)
-	service := service.NewMessageService(repository)
+	service := service.NewMessageService(repository, db)
 	controller := controller.NewMessageController(service, validator.New(), db)
 	jwt := pkg.NewJwtPkg()
 

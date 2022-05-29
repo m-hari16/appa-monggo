@@ -1,19 +1,24 @@
 package service
 
 import (
+	"errors"
 	"go-fiber-app/helper"
 	authRequest "go-fiber-app/src/auth/entity/request"
+	deviceRepository "go-fiber-app/src/device/repository"
 	"go-fiber-app/src/message/entity/domain"
 	"go-fiber-app/src/message/entity/request"
 	"go-fiber-app/src/message/repository"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/jinzhu/copier"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type MessageServiceImpl struct {
 	repository repository.MessageRepository
+	db         *mongo.Client
 }
 
 func (m MessageServiceImpl) Get(req authRequest.UserId) (httpCode int, response helper.Response) {
@@ -65,13 +70,22 @@ func (m MessageServiceImpl) Show(req request.MessageId) (httpCode int, response 
 }
 
 func (m MessageServiceImpl) Update(req request.MessageLogUpdate) (httpCode int, reponse helper.Response) {
-
+	var device domain.Device
 	messageLog := domain.MessageLog{
 		Status:    req.Status,
 		OccuredAt: time.Now().Unix(),
 	}
 
-	err, result := m.repository.Update(req.Id, messageLog)
+	deviceRepository := deviceRepository.NewDeviceRepository(m.db)
+	err, deviceResponse := deviceRepository.Find(req.DeviceId)
+
+	if err != nil {
+		return fiber.StatusNotFound, helper.NotFound(errors.New("Device not registered").Error())
+	}
+
+	copier.Copy(&device, &deviceResponse)
+
+	err, result := m.repository.Update(req.Id, messageLog, device)
 
 	if err != nil {
 		return fiber.StatusBadRequest, helper.BadRequest(err.Error())

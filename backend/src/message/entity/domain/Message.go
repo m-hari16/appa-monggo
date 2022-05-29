@@ -29,9 +29,10 @@ type MessageLog struct {
 }
 
 type Device struct {
-	Id    primitive.ObjectID `json:"id" bson:"_id"`
-	Brand string             `json:"brand" bson:"brand"`
-	Model string             `json:"model" bson:"model"`
+	Id         primitive.ObjectID `json:"id" bson:"_id"`
+	MacAddress string             `json:"mac_address" bson:"mac_address"`
+	Brand      string             `json:"brand" bson:"brand"`
+	Model      string             `json:"model" bson:"model"`
 }
 
 type User struct {

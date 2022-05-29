@@ -80,11 +80,11 @@ func (m MessageRepositoryImpl) Show(req request.MessageId) (err error, result do
 	return nil, result
 }
 
-func (m MessageRepositoryImpl) Update(messageId request.MessageId, req domain.MessageLog) (err error, result interface{}) {
+func (m MessageRepositoryImpl) Update(messageId request.MessageId, messageLog domain.MessageLog, messageDevice domain.Device) (err error, result interface{}) {
 	ctx, cancel := helper.GetContext()
 	defer cancel()
 
-	err = req.Status.IsInvalid()
+	err = messageLog.Status.IsInvalid()
 	if err != nil {
 		return err, result
 	}
@@ -92,8 +92,9 @@ func (m MessageRepositoryImpl) Update(messageId request.MessageId, req domain.Me
 	id, _ := primitive.ObjectIDFromHex(string(messageId))
 	filter := bson.M{"_id": id}
 	update := bson.M{"$set": bson.M{
-		"log":    req,
-		"status": req.Status,
+		"device": messageDevice,
+		"log":    messageLog,
+		"status": messageLog.Status,
 	}}
 
 	collection := m.db.Database(app.GetDatabaseName()).Collection(collectionName)

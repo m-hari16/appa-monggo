@@ -7,6 +7,7 @@ import (
 // @model field is unique
 type Device struct {
 	Id          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	MacAddress  string             `json:"mac_address" bson:"mac_address"`
 	User        User               `json:"user" bson:"user"`
 	Brand       string             `json:"brand" bson:"brand"`
 	Model       string             `json:"model" bson:"model"`

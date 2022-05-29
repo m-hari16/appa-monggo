@@ -29,6 +29,7 @@ func (d DeviceServiceImpl) Create(req request.Device) (httpCode int, response he
 
 	repoRequest := domain.Device{
 		Id:          primitive.NewObjectID(),
+		MacAddress:  req.MacAddress,
 		User:        userDomain,
 		Brand:       req.Brand,
 		Model:       req.Model,

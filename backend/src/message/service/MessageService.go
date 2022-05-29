@@ -6,6 +6,8 @@ import (
 	"go-fiber-app/src/message/entity/domain"
 	"go-fiber-app/src/message/entity/request"
 	"go-fiber-app/src/message/repository"
+
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type MessageService interface {
@@ -15,6 +17,6 @@ type MessageService interface {
 	Update(req request.MessageLogUpdate) (httpCode int, response helper.Response)
 }
 
-func NewMessageService(repository repository.MessageRepository) MessageService {
-	return MessageServiceImpl{repository: repository}
+func NewMessageService(repository repository.MessageRepository, db *mongo.Client) MessageService {
+	return MessageServiceImpl{repository: repository, db: db}
 }

@@ -12,7 +12,7 @@ type MessageRepository interface {
 	Get(req authRequest.UserId) (err error, result []domain.Message)
 	Create(req domain.Message) (err error, result domain.Message)
 	Show(req request.MessageId) (err error, result domain.Message)
-	Update(messageId request.MessageId, req domain.MessageLog) (err error, result interface{})
+	Update(messageId request.MessageId, messageLog domain.MessageLog, messageDevice domain.Device) (err error, result interface{})
 }
 
 func NewMessageRepository(db *mongo.Client) MessageRepository {
