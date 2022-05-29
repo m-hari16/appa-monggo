@@ -25,6 +25,5 @@ func Register(route *fiber.App, db *mongo.Client) {
 	route.Get("/api/auth/greeting", greeting)
 	route.Post("/api/auth/register", controller.Register)
 	route.Post("/api/auth/login", controller.Login)
-	jwt.JwtWare(route)
-	route.Patch("/api/auth/token/:email", controller.UpdateToken)
+	route.Patch("/api/auth/token/:email", jwt.JwtWare(), controller.UpdateToken)
 }

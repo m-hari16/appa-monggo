@@ -32,12 +32,11 @@ func (j JwtPkgImpl) TokenClaims(user domain.User) (err error, t interface{}) {
 	return nil, t
 }
 
-func (j JwtPkgImpl) JwtWare(route *fiber.App) {
-	// JWT Middleware
-	route.Use(jwtware.New(jwtware.Config{
+func (j JwtPkgImpl) JwtWare() fiber.Handler {
+	return jwtware.New(jwtware.Config{
 		SigningKey:   []byte(os.Getenv("SECRET_KEY")),
 		ErrorHandler: j.errorHandler,
-	}))
+	})
 }
 
 func (j JwtPkgImpl) errorHandler(c *fiber.Ctx, err error) error {

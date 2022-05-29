@@ -8,7 +8,7 @@ import (
 
 type JwtPkg interface {
 	TokenClaims(user domain.User) (err error, token interface{})
-	JwtWare(route *fiber.App)
+	JwtWare() fiber.Handler
 	errorHandler(c *fiber.Ctx, err error) error
 	GetTokenData(c *fiber.Ctx) map[string]interface{}
 }

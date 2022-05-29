@@ -23,8 +23,7 @@ func Register(route *fiber.App, db *mongo.Client) {
 	jwt := pkg.NewJwtPkg()
 
 	route.Get("/api/device/greeting", greeting)
-	jwt.JwtWare(route)
-	route.Get("/api/device", controller.Get)
-	route.Get("/api/device/:device_id", controller.Show)
-	route.Post("/api/device", controller.Create)
+	route.Get("/api/device", jwt.JwtWare(), controller.Get)
+	route.Get("/api/device/:device_id", jwt.JwtWare(), controller.Show)
+	route.Post("/api/device", jwt.JwtWare(), controller.Create)
 }
