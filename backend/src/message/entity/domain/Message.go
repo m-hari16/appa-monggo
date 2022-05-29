@@ -9,6 +9,7 @@ import (
 const (
 	PendingStatus MessageStatus = "pending"
 	SendedStatus  MessageStatus = "sended"
+	FailedStatus  MessageStatus = "failed"
 )
 
 type Message struct {
@@ -43,7 +44,7 @@ type MessageStatus string
 
 func (m MessageStatus) IsInvalid() error {
 	switch m {
-	case PendingStatus, SendedStatus:
+	case PendingStatus, SendedStatus, FailedStatus:
 		return nil
 	}
 

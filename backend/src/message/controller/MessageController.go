@@ -10,6 +10,7 @@ type MessageController interface {
 	Get(c *fiber.Ctx) error
 	Create(c *fiber.Ctx) error
 	Show(c *fiber.Ctx) error
+	Update(c *fiber.Ctx) error
 }
 
 func NewMessageController(service service.MessageService) MessageController {

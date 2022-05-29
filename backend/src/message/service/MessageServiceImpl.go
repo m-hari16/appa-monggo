@@ -88,3 +88,24 @@ func (m MessageServiceImpl) Show(req request.MessageId) (httpCode int, response 
 
 	return fiber.StatusOK, helper.HasOk(result)
 }
+
+func (m MessageServiceImpl) Update(req request.MessageLogUpdate) (httpCode int, reponse helper.Response) {
+
+	err := m.validate.Struct(req)
+	if err != nil {
+		return fiber.StatusBadRequest, helper.ErrValidate(err)
+	}
+
+	messageLog := domain.MessageLog{
+		Status:    req.Status,
+		OccuredAt: time.Now().Unix(),
+	}
+
+	err, result := m.repository.Update(req.Id, messageLog)
+
+	if err != nil {
+		return fiber.StatusBadRequest, helper.BadRequest(err.Error())
+	}
+
+	return fiber.StatusOK, helper.HasOk(result)
+}

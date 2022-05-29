@@ -13,6 +13,7 @@ type MessageService interface {
 	Get(req authRequest.UserId) (httpCode int, response helper.Response)
 	Create(req request.Message) (httpCode int, response helper.Response)
 	Show(req request.MessageId) (httpCode int, response helper.Response)
+	Update(req request.MessageLogUpdate) (httpCode int, response helper.Response)
 }
 
 func NewMessageService(repository repository.MessageRepository, validate *validator.Validate) MessageService {

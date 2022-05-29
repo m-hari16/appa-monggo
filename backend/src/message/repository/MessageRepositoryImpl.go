@@ -79,3 +79,35 @@ func (m MessageRepositoryImpl) Show(req request.MessageId) (err error, result do
 
 	return nil, result
 }
+
+func (m MessageRepositoryImpl) Update(messageId request.MessageId, req domain.MessageLog) (err error, result interface{}) {
+	ctx, cancel := helper.GetContext()
+	defer cancel()
+
+	err = req.Status.IsInvalid()
+	if err != nil {
+		return err, result
+	}
+
+	id, _ := primitive.ObjectIDFromHex(string(messageId))
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": bson.M{
+		"log":    req,
+		"status": req.Status,
+	}}
+
+	collection := m.db.Database(app.GetDatabaseName()).Collection(collectionName)
+	result, err = collection.UpdateOne(ctx, filter, update)
+	tmp := result.(*mongo.UpdateResult)
+
+	if err != nil {
+		return err, result
+	}
+
+	if tmp.MatchedCount < 1 {
+		fmt.Println("no")
+		return errors.New("No data found"), nil
+	}
+
+	return nil, result
+}

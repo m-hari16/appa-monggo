@@ -40,3 +40,14 @@ func (m MessageControllerImpl) Show(c *fiber.Ctx) error {
 	httpCode, response := m.service.Show(req)
 	return c.Status(httpCode).JSON(response)
 }
+
+func (m MessageControllerImpl) Update(c *fiber.Ctx) error {
+
+	var req request.MessageLogUpdate
+	err := c.BodyParser(&req)
+	helper.PanicIfNeeded(err)
+
+	httpCode, response := m.service.Update(req)
+
+	return c.Status(httpCode).JSON(response)
+}
