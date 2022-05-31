@@ -33,10 +33,6 @@ func ToSnake(camel string) (snake string) {
 	return b.String()
 }
 
-func ToInterface(data interface{}) interface{} {
-	return data
-}
-
 func MapToStruct(data map[string]interface{}, result interface{}) {
 	dataByte, err := json.Marshal(data)
 	if err != nil {
